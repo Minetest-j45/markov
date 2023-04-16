@@ -39,7 +39,7 @@ const (
 	address  = "IPADDR:PORT"
 )
 
-func process(pkt mt.Pkt) {
+func process(pkt mt.Pkt, m map[string][]string) {
 	switch cmd := pkt.Cmd.(type) {
 	case *mt.ToCltHello:
 		if auth.method != 0 {
@@ -53,7 +53,7 @@ func process(pkt mt.Pkt) {
 		go func() {
 			for {
 				sc.SendCmd(&mt.ToSrvChatMsg{
-					Msg: markov("input.txt", []string{}),
+					Msg: markov(m, []string{}),
 				})
 
 				time.Sleep(30 * time.Second)
@@ -164,13 +164,14 @@ func process(pkt mt.Pkt) {
 	case *mt.ToCltChatMsg:
 		if !strings.HasPrefix(cmd.Text, "<"+name+">") {
 			sc.SendCmd(&mt.ToSrvChatMsg{
-				Msg: markov("input.txt", strings.Fields(cmd.Text)[1:]),
+				Msg: markov(m, strings.Fields(cmd.Text)[1:]),
 			})
 		}
 	}
 }
 
 func main() {
+	m := markovTrain("input.txt")
 	addr, err := net.ResolveUDPAddr("udp", address)
 	if err != nil {
 		fmt.Println("address resolution fail")
@@ -235,6 +236,6 @@ func main() {
 			continue
 		}
 
-		process(pkt)
+		process(pkt, m)
 	}
 }

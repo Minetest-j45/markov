@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func markov(file string, startWords []string) string {
+func markovTrain(file string) map[string][]string {
 	m := make(map[string][]string)
 	data, err := os.ReadFile(file)
 	if err != nil {
@@ -31,6 +31,10 @@ func markov(file string, startWords []string) string {
 		log.Fatal("Failed to train Markov text generator:", err)
 	}
 
+	return m
+}
+
+func markov(m map[string][]string, startWords []string) string {
 	length := rand.Intn(21) + 20
 	output := make([]string, 0, length)
 
