@@ -1,15 +1,15 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
 	"math/rand"
+	"os"
 	"strings"
 )
 
 func markov(file string, startWords []string) string {
 	m := make(map[string][]string)
-	data, err := ioutil.ReadFile(file)
+	data, err := os.ReadFile(file)
 	if err != nil {
 		log.Fatal(err)
 	}
